@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0" />
+    <title>{% block title %}{% endblock %} - Security @12Bcon</title>
+    <link href="//netdna.bootstrapcdn.com/bootswatch/3.0.0/cyborg/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+      {% if flash.error %}
+        <div class="alert alert-danger">{{ flash.error }}</div>
+      {% endif %}
+      {% if flash.success %}
+        <div class="alert alert-success">{{ flash.success }}</div>
+      {% endif %}
+    </div>
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+    <div class="footer text-center">
+      <small>Pesented by Spencer Rinehart @ 12BCon 2013.<br>&copy;2013 Dominion Enterprises | All rights reserved.<br><br></small>
+    </div>
+  </body>
+</html>

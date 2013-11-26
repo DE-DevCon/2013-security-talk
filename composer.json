@@ -1,0 +1,29 @@
+{
+    "name": "dominionenterprises/12bcon-security",
+    "description": "A sample application exhibiting security flaws for a security presentation at 12bcon.",
+    "authors": [
+        {
+            "name": "Spencer Rinehart",
+            "email": "anubis@overthemonkey.com",
+            "role": "Developer"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "~5.4",
+        "slim/slim": "~2.3",
+        "slim/views": "~0.1.0",
+        "twig/twig": "~1.14"
+    },
+    "provide": {
+        "ext-mcrypt": "*"
+    },
+    "extra": {
+        "heroku": {
+            "document-root": "public",
+            "php-config": [
+                "date.timezone=America/New_York"
+            ]
+        }
+    }
+}
