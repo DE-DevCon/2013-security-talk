@@ -1,5 +1,7 @@
 <?php
 return function($app) {
+    $app->config('debug', false);
+
     $app->config('templates.path', __DIR__ . '/templates');
     $view = $app->view(new \Slim\Views\Twig());
     $view->parserExtensions = [new \Slim\Views\TwigExtension()];
