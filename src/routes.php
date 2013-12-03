@@ -10,13 +10,13 @@ return function(\Slim\Slim $app) {
 
     $app->get('/', $needsAuth, function() use($app) {
         $handle = $app->getCookie('handle');
-        $query = pg_query($app->database, "SELECT * FROM tweets WHERE user_handle='{$handle}'");
+        $query = pg_query_params($app->database, 'SELECT * FROM tweets WHERE user_handle=$1', [$handle]);
         $tweets = pg_fetch_all($query);
         $app->render('home.html', ['handle' => $app->getCookie('handle'), 'tweets' => $tweets]);
     });
 
     $app->get('/tweets/:tweetId/edit', $needsAuth, function($tweetId) use($app) {
-        $query = pg_query($app->database, "SELECT * FROM tweets WHERE id='{$tweetId}'");
+        $query = pg_query_params($app->database, "SELECT * FROM tweets WHERE id=$1", [$tweetId]);
         $tweet = pg_fetch_assoc($query);
         $app->render('edit-tweet.html', ['tweet' => $tweet]);
     });
@@ -24,7 +24,7 @@ return function(\Slim\Slim $app) {
     $app->post('/tweets/:tweetId', $needsAuth, function($tweetId) use ($app) {
         $req = $app->request();
         $description = $req->post('description');
-        $query = pg_query($app->database, "UPDATE tweets SET description='{$description}' WHERE id='{$tweetId}'");
+        $query = pg_query_params($app->database, "UPDATE tweets SET description=$1 WHERE id=$2", [$description, $tweetId]);
         $app->flash('success', 'Your tweet has been updated!');
         $app->redirect('/');
     });
@@ -38,7 +38,7 @@ return function(\Slim\Slim $app) {
         $handle = $req->post('handle');
         $password = $req->post('password');
 
-        $result = pg_query($app->database, "SELECT * FROM users WHERE handle='{$handle}' AND password='{$password}'");
+        $result = pg_query_params($app->database, "SELECT * FROM users WHERE handle=$1 AND password=$2", [$handle, $password]);
         if (pg_num_rows($result) > 0) {
             $app->setCookie('handle', $handle);
             $app->flash('success', 'Thanks for logging in!');
