@@ -2,9 +2,16 @@
 return function(\Slim\Slim $app) {
     $needsAuth = function() use($app) {
         $userHandle = $app->getCookie('handle');
-        if ($userHandle === null) {
+        $userHash = $app->getCookie('hash');
+        if ($userHandle === null || $userHash === null) {
             $app->flash('error', 'You must login to view this page.');
             $app->redirect('/login');
+        } else {
+            $result = pg_query_params($app->database, 'SELECT 1 FROM users WHERE handle=$1 AND hash=$2', [$userHandle, $userHash]);
+            if (pg_num_rows($result) === 0) {
+                $app->flash('error', 'Your login session has expired, please log in again');
+                $app->result('/login');
+            }
         }
     };
 
@@ -40,7 +47,10 @@ return function(\Slim\Slim $app) {
 
         $result = pg_query_params($app->database, "SELECT * FROM users WHERE handle=$1 AND password=$2", [$handle, $password]);
         if (pg_num_rows($result) > 0) {
+            $hash = md5(json_encode($_SERVER) . $handle . $app->salt);
+            pg_query_params($app->database, 'UPDATE users SET hash=$1 WHERE handle=$2', [$hash, $handle]);
             $app->setCookie('handle', $handle);
+            $app->setCookie('hash', $hash);
             $app->flash('success', 'Thanks for logging in!');
             $app->redirect('/');
         } else {

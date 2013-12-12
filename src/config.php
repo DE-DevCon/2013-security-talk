@@ -22,4 +22,13 @@ return function($app) {
 
         return $database;
     });
+
+    $app->container->singleton('salt', function() {
+        $salt = getenv('SALT');
+        if (!$salt) {
+            throw new Exception('Missing SALT environment variable');
+        }
+
+        return $salt;
+    });
 };
