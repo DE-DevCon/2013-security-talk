@@ -38,7 +38,9 @@ return function(\Slim\Slim $app) {
         $handle = $req->post('handle');
         $password = $req->post('password');
 
-        $result = pg_query($app->database, "SELECT * FROM users WHERE handle='{$handle}' AND password='{$password}'");
+        $result = pg_query_param($app->database, 'SELECT * FROM users WHERE handle=$1 AND password=$2'
+            [$handle, $password]
+            );
         if (pg_num_rows($result) > 0) {
             $app->setCookie('handle', $handle);
             $app->flash('success', 'Thanks for logging in!');
